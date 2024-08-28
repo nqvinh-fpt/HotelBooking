@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create Customer</h2>
+
+<form id="createCustomerForm">
+    <div>
+        <label>First Name</label>
+        <input type="text" id="firstName" name="firstName" required />
+    </div>
+    <div>
+        <label>Last Name</label>
+        <input type="text" id="lastName" name="lastName" required />
+    </div>
+    <div>
+        <label>Username</label>
+        <input type="text" id="username" name="username" required />
+    </div>
+    <div>
+        <label>Password</label>
+        <input type="password" id="password" name="password" required />
+    </div>
+    <div>
+        <label>Email</label>
+        <input type="email" id="email" name="email" required />
+    </div>
+    <div>
+        <label>Phone Number</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required />
+    </div>
+    <div>
+        <label>Address</label>
+        <input type="text" id="address" name="address" />
+    </div>
+    <button type="submit">Create</button>
+</form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('createCustomerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const customer = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            email: document.getElementById('email').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            address: document.getElementById('address').value
+        };
+
+        fetch('https://localhost:7092/api/customer/save-customer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(customer)
+        })
+            .then(response => response.ok ? alert('Customer created successfully.') : alert('Error creating customer.'))
+            .then(() => window.location.href = '/Customers')
+            .catch(error => console.error('Error creating customer:', error));
+    });
+</script>

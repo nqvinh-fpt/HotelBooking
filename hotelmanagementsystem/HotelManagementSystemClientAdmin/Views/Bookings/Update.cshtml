@@ -1,0 +1,149 @@
+﻿@model int
+
+@{
+    ViewData["Title"] = "Update Booking";
+    int bookingId = Model;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>Update Booking</h1>
+            <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                <ol class="breadcrumb pt-0">
+                    <li class="breadcrumb-item">
+                        <a href="/Bookings">Bookings</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Update</li>
+                </ol>
+            </nav>
+            <div class="separator mb-5"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-4">Basic</h5>
+                    <form id="updateBookingForm" class="tooltip-label-right" novalidate>
+                        <input type="hidden" id="bookingId" name="jQueryBookingId" value="@bookingId">
+                        <div class="form-group position-relative error-l-50">
+                            <label>Room Number</label>
+                            <input id="roomInput" type="text" class="form-control" list="roomList" required>
+                            <datalist id="roomList"></datalist>
+                            <input type="hidden" id="roomId" name="jQueryRoomId">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Customer Name</label>
+                            <input id="customerInput" type="text" class="form-control" readonly>
+                            <input type="hidden" id="customerId" name="jQueryCustomerId">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Check-In Date</label>
+                            <input id="checkInDate" type="datetime-local" class="form-control" required name="jQueryCheckInDate">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Check-Out Date</label>
+                            <input id="checkOutDate" type="datetime-local" class="form-control" required name="jQueryCheckOutDate">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Status</label>
+                            <input id="status" type="text" class="form-control" value="Booked" readonly>
+                            <input type="hidden" id="statusValue" name="jqueryStatus" value="1">
+                        </div>
+                        <button type="button" class="btn btn-primary mb-0" onclick="submitUpdateForm()">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var BookingApiUrl = "https://localhost:7092/api/bookings/update-booking";
+    var GetBookingApiUrl = "https://localhost:7092/api/bookings/get-booking";
+    var bookingId = @bookingId;
+
+    InitializeUpdateComponent(bookingId);
+
+    function InitializeUpdateComponent(bookingId) {
+        InitializeList("roomId");
+        fetchBookingDetails(bookingId);
+    }
+
+    function InitializeList(type) {
+        switch (type) {
+            case "roomId":
+                $("#roomList").html("");
+                fetchRooms();
+                break;
+        }
+    }
+
+    function fetchRooms() {
+        fetch("https://localhost:7092/api/Rooms?$filter=Status eq 'Available'")
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                let html = `<option data-id="${item.roomId}" value="${item.roomNumber}"></option>`;
+                $("#roomList").append(html);
+            }))
+            .catch(err => alert(err));
+    }
+
+    function fetchBookingDetails(bookingId) {
+        fetch(GetBookingApiUrl + "?id=" + bookingId)
+            .then(res => res.json())
+            .then(data => {
+                $("#bookingId").val(data.bookingId);
+                $("#roomInput").val(data.roomNumber);
+                $("#roomId").val(data.roomId);
+                $("#customerInput").val(data.customerName);
+                $("#customerId").val(data.customerId);
+                $("#checkInDate").val(data.checkInDate.slice(0, 16)); // Adjust to match datetime-local input format
+                $("#checkOutDate").val(data.checkOutDate.slice(0, 16)); // Adjust to match datetime-local input format
+                $("#status").val("Booked");
+                $("#statusValue").val("1");
+            })
+            .catch(err => alert(err));
+    }
+
+    function submitUpdateForm() {
+        let roomNumber = document.getElementById("roomInput").value;
+        let roomId = $("#roomList option[value='" + roomNumber + "']").data("id");
+
+        if (!roomId) {
+            alert("Invalid room number.");
+            return;
+        }
+
+        let bookingParam = {
+            bookingId: parseInt(document.getElementById("bookingId").value, 10),
+            roomId: roomId,
+            customerId: parseInt(document.getElementById("customerId").value, 10),
+            status: parseInt(document.getElementById("statusValue").value, 10),
+            checkInDate: document.getElementById("checkInDate").value,
+            checkOutDate: document.getElementById("checkOutDate").value
+        };
+
+        fetch(BookingApiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookingParam)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Update success");
+                    window.location.href = '/Bookings';
+                } else {
+                    console.error('Error updating booking:', response.statusText);
+                    return Promise.reject(new Error('Failed to update booking'));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>

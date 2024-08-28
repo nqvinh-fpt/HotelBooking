@@ -1,0 +1,51 @@
+﻿@using HotelManagementSystemClient.Models.Accounts
+@model RegisterViewModel
+@{
+	ViewData["Title"] = "Register";
+	Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<form asp-action="Register" method="post">
+	<h2>Register</h2>
+	<div class="input-field">
+		<input asp-for="FirstName" type="text" required>
+		<label>Enter your first name</label>
+		<span asp-validation-for="FirstName" class="text-danger"></span>
+	</div>
+	<div class="input-field">
+		<input asp-for="LastName" type="text" required>
+		<label>Enter your last name</label>
+		<span asp-validation-for="LastName" class="text-danger"></span>
+	</div>
+	<div class="input-field">
+		<input asp-for="Email" type="text" required>
+		<label>Enter your email</label>
+		<span asp-validation-for="Email" class="text-danger"></span>
+	</div>
+	<div class="input-field">
+		<input asp-for="PhoneNumber" type="text" required>
+		<label>Enter your phone number</label>
+		<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+	</div>
+	<div class="input-field">
+		<input asp-for="Username" type="text" required>
+		<label>Enter your username</label>
+		<span asp-validation-for="Username" class="text-danger"></span>
+	</div>
+	<div class="input-field">
+		<input asp-for="Password" type="password" required>
+		<label>Enter your password</label>
+		<span asp-validation-for="Password" class="text-danger"></span>
+	</div>
+	<div class="forget">
+		<label for="remember">
+			<input name="RememberMe" type="checkbox">
+			<p>Remember me</p>
+		</label>
+		<a href="#">Forgot password?</a>
+	</div>
+	<button type="submit">Register</button>
+	<div class="register">
+		<p><a asp-controller="Accounts" asp-action="Login">Login</a></p>
+	</div>
+</form>

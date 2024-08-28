@@ -1,0 +1,142 @@
+﻿@{
+    ViewData["Title"] = "Room List";
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    h1, h2, h3 {
+        color: #333;
+    }
+
+    form {
+        margin-top: 20px;
+    }
+
+    label {
+        display: block;
+        margin: 5px 0;
+    }
+
+    input, button {
+        margin: 5px 0;
+        padding: 8px;
+    }
+
+    button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+    .feedback-container {
+        display: none;
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+</style>
+
+<h1>Room List</h1>
+
+<div id="roomsContainer"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadRooms();
+
+        function loadRooms() {
+            fetch('https://localhost:7092/api/Rooms')
+                .then(response => response.json())
+                .then(data => {
+                    const roomsContainer = document.getElementById('roomsContainer');
+                    roomsContainer.innerHTML = ''; // Clear the container before loading rooms
+                    data.forEach(room => {
+                        const roomDiv = document.createElement('div');
+                        roomDiv.innerHTML = `
+                                    <h2>${room.roomNumber} - ${room.roomType}</h2>
+                                    <button onclick="viewFeedback(${room.roomId}, this)">View Feedback</button>
+                                    <div id="feedbackContainer${room.roomId}" class="feedback-container"></div>
+                                `;
+                        roomsContainer.appendChild(roomDiv);
+                    });
+                });
+        }
+
+        window.viewFeedback = function (roomId, button) {
+            const feedbackContainer = document.getElementById(`feedbackContainer${roomId}`);
+            if (feedbackContainer.style.display === "block") {
+                feedbackContainer.style.display = "none";
+                button.innerText = "View Feedback";
+                return;
+            }
+
+            fetch(`https://localhost:7092/api/Feedbacks/GetFeedBacksByRoomId/${roomId}`)
+                .then(response => response.json())
+                .then(data => {
+                    feedbackContainer.innerHTML = '<h3>Feedbacks</h3>';
+                    data.forEach(feedback => {
+                        const feedbackDiv = document.createElement('div');
+                        feedbackDiv.innerHTML = `
+                                    <p>Rating: ${feedback.rating}</p>
+                                    <p>Comment: ${feedback.comment}</p>
+                                    <button onclick="editFeedback(${feedback.feedbackId}, ${roomId})">Edit</button>
+                                    <button onclick="deleteFeedback(${feedback.feedbackId}, ${roomId})">Delete</button>
+                                `;
+                        feedbackContainer.appendChild(feedbackDiv);
+                    });
+                    feedbackContainer.style.display = "block";
+                    button.innerText = "Hide Feedback";
+                });
+        };
+
+        window.editFeedback = function (feedbackId, roomId) {
+            fetch(`https://localhost:7092/api/Feedbacks/GetFeedBacksByRoomId/${roomId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const feedback = data.find(fb => fb.feedbackId === feedbackId);
+                    const newRating = prompt("Enter new rating:", feedback.rating);
+                    const newComment = prompt("Enter new comment:", feedback.comment);
+                    if (newRating && newComment) {
+                        fetch(`https://localhost:7092/api/Feedbacks/edit-feedback/${feedbackId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                feedbackId: feedback.feedbackId,
+                                roomId: feedback.roomId,
+                                customerId: feedback.customerId,
+                                feedbackDate: feedback.feedbackDate,
+                                rating: newRating,
+                                comment: newComment
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                alert('Feedback updated successfully');
+                                loadRooms(); // Reload the entire room list and feedbacks
+                            });
+                    }
+                });
+        };
+
+        window.deleteFeedback = function (feedbackId, roomId) {
+            if (confirm("Are you sure you want to delete this feedback?")) {
+                fetch(`https://localhost:7092/api/Feedbacks/remove-feedback/${feedbackId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Feedback deleted successfully');
+                        loadRooms(); // Reload the entire room list and feedbacks
+                    });
+            }
+        };
+    });
+</script>

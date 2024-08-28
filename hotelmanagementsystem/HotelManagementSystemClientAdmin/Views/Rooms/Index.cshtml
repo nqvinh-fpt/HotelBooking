@@ -1,0 +1,332 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container-fluid disable-text-selection">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-2">
+                <h1>Room List</h1>
+                <div class="top-right-button-container">
+                    <a href="Rooms/Create">
+                        <button type="button" class="btn btn-primary btn-lg top-right-button mr-1">ADD NEW</button>
+                    </a>
+                    <div class="btn-group">
+                        <div class="btn btn-primary btn-lg pl-4 pr-0 check-button">
+                            <label class="custom-control custom-checkbox mb-0 d-inline-block">
+                                <input type="checkbox" class="custom-control-input" id="checkAll">
+                                <span class="custom-control-label">&nbsp;</span>
+                            </label>
+                        </div>
+                        <button type="button"
+                                class="btn btn-lg btn-primary dropdown-toggle dropdown-toggle-split"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                        </div>
+                    </div>
+                </div>
+                <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                    <ol class="breadcrumb pt-0">
+                        @*                        <li class="breadcrumb-item">
+                        <a href="#">Home</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                        <a href="#">Library</a>
+                        </li>*@
+                        <li class="breadcrumb-item active" aria-current="page">Rooms</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="mb-2">
+                <a class="btn pt-0 pl-0 d-inline-block d-md-none" data-toggle="collapse" href="#displayOptions"
+                   role="button" aria-expanded="true" aria-controls="displayOptions">
+                    Display Options
+                    <i class="simple-icon-arrow-down align-middle"></i>
+                </a>
+                <div class="collapse dont-collapse-sm" id="displayOptions">
+                    <div class="d-block d-md-inline-block">
+                        <div id="statusOption" class="btn-group float-md-left mr-1 mb-1">
+                            <button class="btn btn-outline-dark btn-xs dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Room Status
+                            </button>
+                            <div id="statusDropdown" class="dropdown-menu">
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Available</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Booked</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Cleaning</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Maintenance</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">All</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block d-md-inline-block">
+                        <div id="typeOption" class="btn-group float-md-left mr-1 mb-1">
+                            <button class="btn btn-outline-dark btn-xs dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Room Type
+                            </button>
+                            <div id="typeDropdown" class="dropdown-menu">
+                                <a class="dropdown-item" onclick="setSearchType(this)">Available</a>
+                                <a class="dropdown-item" onclick="setSearchType(this)">Booked</a>
+                                <a class="dropdown-item" onclick="setSearchType(this)">Cleaning</a>
+                                <a class="dropdown-item" onclick="setSearchType(this)">Maintenance</a>
+                                <a class="dropdown-item" onclick="setSearchType(this)">All</a>
+                            </div>
+                        </div>
+                        <div class="search-sm d-inline-block float-md-left mr-1 mb-1 align-top">
+                            <input placeholder="Search...">
+                        </div>
+                    </div>
+                    <div class="float-md-right">
+                        <span id="numSpan" class="text-muted text-small">Displaying 1-10 of 210 items </span>
+                        <button id="itemNum" class="btn btn-outline-dark btn-xs dropdown-toggle" type="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            20
+                        </button>
+                        <div id="itemNumDropdown" class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 10)">10</a>
+                            <a class="dropdown-item active" href="#" onclick="setItemNum(this, 20)">20</a>
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 30)">30</a>
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 50)">50</a>
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 100)">100</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="separator mb-5"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 list" data-check-all="checkAll" id="listRooms">
+
+            <div class="card d-flex flex-row mb-3">
+                <div class="d-flex flex-grow-1 min-width-zero">
+                    <div class="card-body align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
+                        <a class="list-item-heading mb-0 truncate w-40 w-xs-100" href="Pages.Product.Detail.html">
+                            Cheesecake
+                        </a>
+                        <p class="mb-0 text-muted text-small w-15 w-xs-100">Cupcakes</p>
+                        <p class="mb-0 text-muted text-small w-15 w-xs-100">18.02.2018</p>
+                        <div class="w-15 w-xs-100">
+                            <span class="badge badge-pill badge-primary">PROCESSED</span>
+                        </div>
+                    </div>
+                    <label class="custom-control custom-checkbox mb-1 align-self-center pr-4">
+                        <input type="checkbox" class="custom-control-input">
+                        <span class="custom-control-label">&nbsp;</span>
+                    </label>
+                </div>
+            </div>
+
+
+            @*<nav class="mt-4 mb-3">
+            <ul class="pagination justify-content-center mb-0">
+            <li class="page-item ">
+            <a class="page-link first" href="#">
+            <i class="simple-icon-control-start"></i>
+            </a>
+            </li>
+            <li class="page-item ">
+            <a class="page-link prev" href="#">
+            <i class="simple-icon-arrow-left"></i>
+            </a>
+            </li>
+            <li class="page-item active">
+            <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item ">
+            <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="#">3</a>
+            </li>
+            <li class="page-item ">
+            <a class="page-link next" href="#" aria-label="Next">
+            <i class="simple-icon-arrow-right"></i>
+            </a>
+            </li>
+            <li class="page-item ">
+            <a class="page-link last" href="#">
+            <i class="simple-icon-control-end"></i>
+            </a>
+            </li>
+            </ul>
+            </nav>*@
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script type="text/javascript">
+    const RoomApiUrl = "https://localhost:7092/api/Rooms";
+    let searchAPI = '$filter=';
+    let orderAPI = 'orderby=Floor%20asc,%20roomNumber%20asc,%20roomId%20asc';
+    let itemNum = 20;
+    let currentPage = 1;
+    let typeAPI = '';
+    let statusAPI = '';
+    const statusMap = new Map([
+        ['Available', 'badge-success'],
+        ['Booked', 'badge-info'],
+        ['Cleaning', 'badge-light'],
+        ['Maintenance', 'badge-danger'],
+        // You can add other key-value pairs here
+    ]);
+
+    const typeMap = new Map([
+        ['Standard', 'badge-success'],
+        ['Deluxe', 'badge-info'],
+        ['Suite', 'badge-light'],
+        ['Penthouse', 'badge-danger'],
+        // You can add other key-value pairs here
+    ]);
+    DisplayRooms();
+    setupFilter();
+
+    function setSearchType(element) {
+        if (element.innerHTML == 'All') {
+            typeAPI = '';
+            $("#typeOption button").html("Room Type");
+        } else {
+            let temp = 'roomType eq %27' + element.innerHTML + '%27';
+            typeAPI = temp;
+            $("#typeOption button").html(element.innerHTML);
+        }
+        DisplayRooms();
+    }
+
+    function setSearchStatus(element) {
+        if (element.innerHTML == 'All') {
+            statusAPI = '';
+            $("#statusOption button").html("Room Status");
+        } else {
+            let temp = 'status eq %27' + element.innerHTML + '%27';
+            statusAPI = temp;
+            $("#statusOption button").html(element.innerHTML);
+        }
+        DisplayRooms();
+    }
+
+    function setFilerQuery() {
+        if (typeAPI == '' && statusAPI == '') {
+            searchAPI = '';
+            console.log("searchAPI: " + searchAPI);
+        } else if (typeAPI != '' && statusAPI != '') {
+            searchAPI = '$filter=' + typeAPI + ' and ' + statusAPI;
+            console.log("searchAPI: " + searchAPI);
+        } else {
+            searchAPI = '$filter=' + typeAPI + statusAPI;
+            console.log("searchAPI: " + searchAPI);
+        }
+    }
+
+    function setupFilter() {
+        setupStatusOption();
+        setupTypeOption();
+    }
+
+    function setupTypeOption() {
+        $("#typeOption div").html("");
+        for (const [key, value] of typeMap) {
+            console.log("Key:", key, "Value:", value);
+            $("#typeOption div").append('<a class="dropdown-item" onclick="setSearchType(this)">' + key + '</a>');
+        }
+        $("#typeOption div").append('<a class="dropdown-item" onclick="setSearchType(this)">All</a>');
+    }
+
+    function setupStatusOption() {
+        $("#statusOption div").html("");
+        for (const [key, value] of statusMap) {
+            console.log("Key:", key, "Value:", value);
+            $("#statusOption div").append('<a class="dropdown-item" onclick="setSearchStatus(this)">' + key + '</a>');
+        }
+        $("#statusOption div").append('<a class="dropdown-item" onclick="setSearchStatus(this)">All</a>');
+    }
+
+    function setNumSpan() {
+        $("#numSpan").html("");
+        fetch("https://localhost:7092/odata/Rooms/$count")
+            .then(res => res.json())
+            .then(data => {
+                if (typeof data === 'number') { // Check if the data is an integer
+                    console.log("Fetched integer:", data);
+                    $("#numSpan").html("Displaying 1-10 of " + data + " items");
+                } else {
+                    console.error("API response is not an integer:", data);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    function setItemNum(element, num) {
+        itemNum = num;
+        var temp = document.getElementById("itemNum");
+        temp.innerHTML = itemNum;
+        $("#itemNumDropdown a").removeClass().addClass("dropdown-item");
+        //console.log("Clicked element:", element);
+        element.className += " active";
+    }
+
+    function DisplayRooms() {
+        setFilerQuery();
+        $("#listRooms").html("");
+        fetch(RoomApiUrl + '?' + searchAPI +'&'+ orderAPI)
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                console.log(item)
+                let html = `<div class="card d-flex flex-row mb-3">
+                                        <div class="d-flex flex-grow-1 min-width-zero">
+                                            <div class="card-body align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
+                                                <a class="list-item-heading mb-0 truncate w-20 w-xs-100" href='/Rooms/Update?id=${item.roomId}'>
+                                                        ${item.roomNumber}
+                                                </a>
+                                                        <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.roomType}</p>
+                                                        <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.price}</p>
+                                                <div class="w-15 w-xs-100">
+                                                                    <span class="badge badge-pill ${statusMap.get(item.status)}">${item.status}</span>
+                                                </div>
+                                                <div class="w-20 w-xs-100 btn-group btn-group-sm" role="group">
+                                                            <a type="button" class="btn  btn-secondary" href='/Rooms/Update?id=${item.roomId}'>Update</a>
+                                                                    <button type="button" class="btn  btn-danger" onclick="deleteRoom(${item.OrderId})">Delete</button>
+                                                    </div>
+                                            </div>
+                                            <label class="custom-control custom-checkbox mb-1 align-self-center pr-4">
+                                                    <input type="checkbox" class="custom-control-input" name="selectRoom" value="${item.roomId}">
+                                                <span class="custom-control-label">&nbsp;</span>
+                                            </label>
+                                        </div>
+                                    </div>`
+                $("#listRooms").append(html);
+            }))
+            .catch(err => alert(err));
+        setNumSpan();
+    }
+
+    function deleteRoom(id) {
+        $.ajax({
+            url: "https://localhost:7092/api/Rooms/DeleteRoom/" + id,
+            type: "delete",
+            contentType: "application/json",
+            success: function (result, status, xhr) {
+                console.log("delete room");
+                DisplayRooms();
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+            }
+
+        });
+    }
+
+</script>
+<script src="~/admin/js/vendor/jquery.contextMenu.min.js"></script>

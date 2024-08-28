@@ -1,0 +1,462 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    //double occupiedPercent = ViewBag.occupiedPercent;
+
+}
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+         .section {
+             margin-bottom: 20px;
+         }
+
+         .table-container {
+             display: flex;
+             justify-content: space-between;
+         }
+
+         table {
+             width: 30%;
+             border-collapse: collapse;
+             margin-bottom: 20px;
+         }
+
+         table, th, td {
+             border: 1px solid black;
+         }
+
+         th, td {
+             padding: 8px;
+             text-align: left;
+         }
+</style>
+<head>
+
+
+</head>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12 col-xl-12 mb-4">
+            <div class="card">
+                <div class="card-header p-0 position-relative">
+                    <div class="position-absolute handle card-icon">
+                        <i class="simple-icon-shuffle"></i>
+                    </div>
+                </div>
+                <div id="occupiedBar" class="card-body d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Room Occupied</h6>
+                    <div role="progressbar" class="progress-bar-circle position-relative" data-color="#922c88"
+                         @* data-trailColor="#d7d7d7" aria-valuemax="100" aria-valuenow="@occupiedPercent" *@
+                         data-show-percent="true">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="section">
+        <h3 class="text-primary">Total Revenue</h3>
+        <div class="row">
+            <div class="col">
+                <span>Today:</span> <span id="revenue-today" class="font-weight-bold"></span>
+            </div>
+            <div class="col">
+                <span>Last 30 Days:</span> <span id="revenue-30days" class="font-weight-bold"></span>
+            </div>
+            <div class="col">
+                <span>This Year:</span> <span id="revenue-year" class="font-weight-bold"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="text-primary">Total Bookings</h3>
+        <div class="row">
+            <div class="col">
+                <span>Today:</span> <span id="bookings-today" class="font-weight-bold"></span>
+            </div>
+            <div class="col">
+                <span>Last 30 Days:</span> <span id="bookings-30days" class="font-weight-bold"></span>
+            </div>
+            <div class="col">
+                <span>This Year:</span> <span id="bookings-year" class="font-weight-bold"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="text-primary">Top Customers</h3>
+        <div class="table-container">
+            <div>
+                <h4>Today</h4>
+                <table id="top-customers-today" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Last 30 Days</h4>
+                <table id="top-customers-30days" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h4>This Year</h4>
+                <table id="top-customers-year" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="text-primary">Top Booking Rooms</h3>
+        <div class="table-container">
+            <div>
+                <h4>Today</h4>
+                <table id="top-rooms-today" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Last 30 Days</h4>
+                <table id="top-rooms-30days" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h4>This Year</h4>
+                <table id="top-rooms-year" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="text-primary">Top Revenue Rooms</h3>
+        <div class="table-container">
+            <div>
+                <h4>Today</h4>
+                <table id="top-revenue-rooms-today" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Last 30 Days</h4>
+                <table id="top-revenue-rooms-30days" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h4>This Year</h4>
+                <table id="top-revenue-rooms-year" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    var popperjs = "@popperjs";
+}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+ <script>
+    $(document).ready(function () {
+        const baseUrl = 'https://localhost:7092/api/Reports';
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+        // Fetch and display total revenue
+        function fetchRevenue() {
+            const today = new Date().toISOString().split('T')[0];
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+
+            $.get(`${baseUrl}/revenue`, { startDate: yesterday, endDate: today }, function (data) {
+                $('#revenue-today').text(data);
+            });
+
+            $.get(`${baseUrl}/revenue`, { startDate: thirtyDaysAgo, endDate: today }, function (data) {
+                $('#revenue-30days').text(data);
+            });
+
+            $.get(`${baseUrl}/revenue`, { startDate: yearStart, endDate: today }, function (data) {
+                $('#revenue-year').text(data);
+            });
+        }
+
+        // Fetch and display total bookings
+        function fetchBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+
+            $.get(`${baseUrl}/bookings`, { startDate: yesterday, endDate: today }, function (data) {
+                $('#bookings-today').text(data);
+            });
+
+            $.get(`${baseUrl}/bookings`, { startDate: thirtyDaysAgo, endDate: today }, function (data) {
+                $('#bookings-30days').text(data);
+            });
+
+            $.get(`${baseUrl}/bookings`, { startDate: yearStart, endDate: today }, function (data) {
+                $('#bookings-year').text(data);
+            });
+        }
+
+        // Fetch and display top booking customers
+        function fetchTopCustomers() {
+            const today = new Date().toISOString().split('T')[0];
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+
+            function populateTable(selector, data) {
+                const tableBody = $(selector).find('tbody');
+                tableBody.empty();
+                data.forEach(customer => {
+                    tableBody.append(`<tr><td>${customer.name}</td><td>${customer.totalBookings}</td></tr>`);
+                });
+            }
+
+            $.get(`${baseUrl}/topCustomer`, { topCustomer: 5, startDate: yesterday, endDate: today }, function (data) {
+                populateTable('#top-customers-today', data);
+            });
+
+            $.get(`${baseUrl}/topCustomer`, { topCustomer: 5, startDate: thirtyDaysAgo, endDate: today }, function (data) {
+                populateTable('#top-customers-30days', data);
+            });
+
+            $.get(`${baseUrl}/topCustomer`, { topCustomer: 5, startDate: yearStart, endDate: today }, function (data) {
+                populateTable('#top-customers-year', data);
+            });
+        }
+
+        fetchRevenue();
+        fetchBookings();
+        fetchTopCustomers();
+
+        // Function to get top booking rooms
+        function fetchTopBookingRooms() {
+            const today = new Date().toISOString().split('T')[0];
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+
+            function populateTable(selector, data) {
+                const tableBody = $(selector).find('tbody');
+                tableBody.empty();
+                data.forEach(room => {
+                    tableBody.append(`<tr><td>${room.roomNumber}</td><td>${room.totalBooking}</td></tr>`);
+                });
+            }
+
+            $.get(`${baseUrl}/topRoom`, { topRoom: 5, startDate: yesterday, endDate: today }, function (data) {
+                populateTable('#top-rooms-today', data);
+            });
+
+            $.get(`${baseUrl}/topRoom`, { topRoom: 5, startDate: thirtyDaysAgo, endDate: today }, function (data) {
+                populateTable('#top-rooms-30days', data);
+            });
+
+            $.get(`${baseUrl}/topRoom`, { topRoom: 5, startDate: yearStart, endDate: today }, function (data) {
+                populateTable('#top-rooms-year', data);
+            });
+        }
+
+        function fetchTopRevenueRooms() {
+            const today = new Date().toISOString().split('T')[0];
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+
+            function populateTable(selector, data) {
+                const tableBody = $(selector).find('tbody');
+                tableBody.empty();
+                data.forEach(room => {
+                    tableBody.append(`<tr><td>${room.roomNumber}</td><td>${room.totalRevenue}</td></tr>`);
+                });
+            }
+
+            $.get(`${baseUrl}/topRevenueRoom`, { topRoom: 5, startDate: yesterday, endDate: today }, function (data) {
+                populateTable('#top-revenue-rooms-today', data);
+            });
+
+            $.get(`${baseUrl}/topRevenueRoom`, { topRoom: 5, startDate: thirtyDaysAgo, endDate: today }, function (data) {
+                populateTable('#top-revenue-rooms-30days', data);
+            });
+
+            $.get(`${baseUrl}/topRevenueRoom`, { topRoom: 5, startDate: yearStart, endDate: today }, function (data) {
+                populateTable('#top-revenue-rooms-year', data);
+            });
+        }
+        fetchTopBookingRooms();
+        fetchTopRevenueRooms();
+        // Function to get room occupancy percent
+        function fetchOccupancyPercent() {
+            $.get(`${baseUrl}/occupancy`, function (data) {
+                $('#occupancy-percent-value').text(`${data}%`);
+            }).fail(function () {
+                $('#occupancy-percent-value').text('Error fetching data');
+            });
+        }
+
+        // Function to get room usage during a specific time period
+        function getRoomOccupiedTimePeriod(startDate, endDate) {
+            if (startDate === endDate) {
+                console.error('StartDate and EndDate cannot be the same');
+                return;
+            }
+
+            $.ajax({
+                url: `${baseUrl}/rooms/usage?startDate=${startDate}&endDate=${endDate}`,
+                method: 'GET',
+                success: function (data) {
+                    console.log('Room Usage:', data);
+                    // Handle the data as needed
+                },
+                error: function (error) {
+                    console.error('Error fetching room usage:', error);
+                }
+            });
+        }
+        const today = new Date().toISOString().split('T')[0];
+
+        // Calculate date ranges
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const thirtyDaysAgoDate = thirtyDaysAgo.toISOString().split('T')[0];
+
+        const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+        const endOfYear = new Date(new Date().getFullYear(), 11, 31).toISOString().split('T')[0];
+        function fetchRoomOccupancy(startDate, endDate, elementId) {
+            $.get(`${baseUrl}/rooms/usage?startDate=${startDate}&endDate=${endDate}`, function (data) {
+                // Calculate and update occupancy percent display
+                const averageOccupancyPercent = data.reduce((acc, room) => acc + room.OcupancyPercent, 0) / data.length;
+                $(`#${elementId}`).text(`${averageOccupancyPercent}%`);
+
+                // Clear existing table rows
+                $('#room-occupancy-table tbody').empty();
+
+                // Insert new rows
+                data.forEach(room => {
+                    $('#room-occupancy-table tbody').append(`
+                            <tr>
+                                <td>${room.roomId}</td>
+                                <td>${room.usedHours}</td>
+                                <td>${room.ocupancyPercent}%</td>
+                            </tr> 
+                        `);
+                });
+            }).fail(function () {
+                $(`#${elementId}`).text('Error fetching data');
+                $('#room-occupancy-table tbody').append('<tr><td colspan="3">Error fetching data</td></tr>');
+            });
+        }
+
+
+    });
+</script>
+<script type="text/javascript">
+    setData();
+
+
+    ///set all data
+    function setData() {
+        setProcessBar();
+    }
+
+    function setProcessBar() {
+        //$("#occupiedBar").html("");
+        //fetch("https://localhost:7092/api/Reports/occupancy")
+        //    .then(res => res.json())
+        //    .then(data => {
+        //        if (typeof data === 'number') { // Check if the data is an integer
+        //            console.log("Fetched integer:", data);
+        //            let html = `<h6 class="mb-0">Room Occupied</h6>
+        //                <div  role="progressbar" class="progress-bar-circle position-relative" data-color="#922c88"
+        //                     data-trailColor="#d7d7d7" aria-valuemax="100" aria-valuenow="${data}"
+        //                     data-show-percent="true">
+        //                </div>`
+        //            $("#occupiedBar").html(html);
+        //        } else {
+        //            console.error("API response is not an integer:", data);
+        //        }
+        //    })
+        //    .catch(error => console.error("Error:", error));
+    }
+</script>
+ 
+<script src="~/admin/js/vendor/jquery-3.3.1.min.js"></script>
+<script src="~/admin/js/vendor/Chart.bundle.min.js"></script>
+<script src="~/admin/js/vendor/chartjs-plugin-datalabels.js"></script>
+<script src="~/admin/js/vendor/moment.min.js"></script>
+<script src="~/admin/js/vendor/fullcalendar.min.js"></script>
+<script src="~/admin/js/vendor/datatables.min.js"></script>
+<script src="~/admin/js/vendor/perfect-scrollbar.min.js"></script>
+<script src="~/admin/js/vendor/progressbar.min.js"></script>
+<script src="~/admin/js/vendor/jquery.barrating.min.js"></script>
+<script src="~/admin/js/vendor/select2.full.js"></script>
+<script src="~/admin/js/vendor/nouislider.min.js"></script>
+<script src="~/admin/js/vendor/bootstrap-datepicker.js"></script>
+<script src="~/admin/js/vendor/Sortable.js"></script>
+<script src="~/admin/js/vendor/mousetrap.min.js"></script>
+<script src="~/admin/js/vendor/glide.min.js"></script>

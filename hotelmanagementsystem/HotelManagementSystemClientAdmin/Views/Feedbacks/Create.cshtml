@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Create Room";
+}
+
+<h1>Create Room</h1>
+
+<form id="createRoomForm">
+    <label>Room Number: <input type="text" id="roomNumber"></label><br>
+    <label>Room Type: <input type="text" id="roomType"></label><br>
+    <label>Status: <input type="text" id="status"></label><br>
+    <label>Price: <input type="number" id="price"></label><br>
+    <label>Amenities: <input type="text" id="amenities"></label><br>
+    <label>Room Image: <input type="text" id="roomImage"></label><br>
+    <label>Floor: <input type="number" id="floor"></label><br>
+    <button type="button" onclick="createRoom()">Create Room</button>
+</form>
+
+<script>
+    function createRoom() {
+        const room = {
+            roomNumber: document.getElementById('roomNumber').value,
+            roomType: document.getElementById('roomType').value,
+            status: document.getElementById('status').value,
+            price: document.getElementById('price').value,
+            amenities: document.getElementById('amenities').value,
+            roomImage: document.getElementById('roomImage').value,
+            floor: document.getElementById('floor').value
+        };
+
+        fetch('/api/Rooms', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(room)
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Room created successfully');
+                window.location.href = '/Rooms/Index';
+            });
+    }
+</script>

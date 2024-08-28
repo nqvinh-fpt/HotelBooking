@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Customer List</h2>
+
+<table id="customerTable" class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Customer rows will be populated here -->
+    </tbody>
+</table>
+
+<button onclick="window.location.href='/admin/customer/create'">Create New Customer</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        fetch('https://localhost:7092/api/customer/get-all-customer')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('customerTable').querySelector('tbody');
+                data.forEach(customer => {
+                    let row = tableBody.insertRow();
+                    row.insertCell(0).innerText = customer.firstName;
+                    row.insertCell(1).innerText = customer.lastName;
+                    row.insertCell(2).innerText = customer.username;
+                    row.insertCell(3).innerText = customer.email;
+                    row.insertCell(4).innerText = customer.phoneNumber;
+                    row.insertCell(5).innerText = customer.address;
+                    let actionsCell = row.insertCell(6);
+                    actionsCell.innerHTML = `
+                            <button onclick="window.location.href='/Customers/update/${customer.customerId}'">Edit</button>
+                            <button onclick="deleteCustomer(${customer.customerId})">Delete</button>`;
+                });
+            })
+            .catch(error => console.error('Error fetching customer data:', error));
+    });
+
+    function deleteCustomer(customerId) {
+        if (!confirm('Are you sure you want to delete this customer?')) {
+            return;
+        }
+
+        fetch(`https://localhost:7092/api/customer/remove-customer/${customerId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Customer deleted successfully.');
+                    location.reload();
+                } else {
+                    alert('Error deleting customer.');
+                }
+            })
+            .catch(error => console.error('Error deleting customer:', error));
+    }
+</script>

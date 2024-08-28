@@ -1,0 +1,217 @@
+﻿@model HotelManagementSystemClient.Controllers.RoomDTO
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+
+            <h1>Update Room</h1>
+            <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                <ol class="breadcrumb pt-0">
+                    <li class="breadcrumb-item">
+                        <a href="/Rooms">Rooms</a>
+                    </li>
+                    @*<li class="breadcrumb-item">
+                    <a href="#">Library</a>
+                    </li>*@
+                    <li class="breadcrumb-item active" aria-current="page">Update</li>
+                </ol>
+            </nav>
+            <div class="separator mb-5"></div>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-4">Basic</h5>
+                    <form id="createForm" class="tooltip-label-right" novalidate>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Room Number</label>
+                            <input id="roomNumber" type="text" class="form-control" name="jQueryName" required>
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Room Type</label>
+                            <input id="roomType" type="text" class="form-control" list="typeList" required name="jQueryType">
+                            <datalist id="typeList">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                            </datalist>
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Status</label>
+                            <input id="status" type="text" class="form-control" list="statusList" required name="jqueryStatus">
+                            <datalist id="statusList">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                            </datalist>
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Price</label>
+                            <input id="price" type="number" class="form-control" required name="jQueryPrice" min="0">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Floor</label>
+                            <input id="floor" type="number" class="form-control" list="floorList" required name="jqueryFloor">
+                            <datalist id="floorList">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                            </datalist>
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Amenities</label>
+                            <input id="amenities" type="text" class="form-control" required name="jQueryAmenities">
+                        </div>
+                        <button type="button" class="btn btn-primary mb-0" onclick="submitForm()">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script type="text/javascript">
+    var RoomApiUrl = "https://localhost:7092/api/Rooms";
+    //DisplayRooms();
+    InitializeComponent();
+
+    function InitializeComponent() {
+        InitializeList("floor");
+        InitializeList("roomType");
+        InitializeList("status");
+        InitializeData();
+    }
+
+    function InitializeData() {
+        fetch("https://localhost:7092/api/Rooms?filter=roomId eq @Model.RoomId")
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                console.log(item);
+                let html = `${item.roomNumber}`
+                $("#roomNumber").val(html);
+                html = `${item.roomType}`
+                $("#roomType").val(html);
+                html = `${item.status}`
+                $("#status").val(html);
+                html = `${item.price}`
+                $("#price").val(html);
+                html = `${item.amenities}`
+                $("#amenities").val(html);
+                html = `${item.floor}`
+                $("#floor").val(html);
+            }))
+            .catch(err => alert(err));
+    }
+
+    function InitializeList(type) {
+        switch (type) {
+            case "floor":
+                $("#floorList").html("");
+                break;
+            case "roomType":
+                $("#typeList").html("");
+                break;
+            // ... more cases
+            case "status":
+                $("#statusList").html("");
+                break;
+        }
+
+        fetch("https://localhost:7092/api/Rooms?apply=groupby((" + type + "))")
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                console.log(item);
+                let html = "";
+                switch (type) {
+                    case "floor":
+                        html = `<option value="${item.Floor}">${item.Floor}</option>`;
+                        $("#floorList").append(html);
+                        break;
+                    case "roomType":
+                        html = `<option value="${item.RoomType}">${item.RoomType}</option>`;
+                        $("#typeList").append(html);
+                        break;
+                    // ... more cases
+                    case "status":
+                        html = `<option value="${item.Status}">${item.Status}</option>`;
+                        $("#statusList").append(html);
+                        break;
+                }
+            }))
+            .catch(err => alert(err));
+    }
+
+    function submitForm() {
+        let roomParam =
+        {
+            roomId: @Model.RoomId,
+            roomNumber: document.getElementById("roomNumber").value,
+            roomType: document.getElementById("roomType").value,
+            status: document.getElementById("status").value,
+            price: document.getElementById("price").value,
+            amenities: document.getElementById("amenities").value,
+            floor: document.getElementById("floor").value,
+        };
+        fetch('https://localhost:7092/api/Rooms/UpdateRoom/@Model.RoomId', {
+            method: 'Put',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(roomParam)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Update success");
+                    window.location.href = '/rooms/index';
+                } else {
+                    // Handle specific errors here (e.g., response status code)
+                    console.error('Error updating order:', response.statusText);
+                    return Promise.reject(new Error('Failed to updating order')); // Or throw an error
+                }
+            })
+
+            .catch(error => console.error('Error:', error));
+    }
+
+    function DisplayRooms() {
+        $("#listRooms").html("");
+        fetch("https://localhost:7092/api/Rooms?orderby=Floor%20asc,%20roomNumber%20asc,%20roomId%20asc")
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                console.log(item)
+                let html = `<div class="card d-flex flex-row mb-3">
+                                            <div class="d-flex flex-grow-1 min-width-zero">
+                                                <div class="card-body align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
+                                                    <a class="list-item-heading mb-0 truncate w-40 w-xs-100" href="Pages.Product.Detail.html">
+                                                            ${item.roomNumber}
+                                                    </a>
+                                                            <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.roomType}</p>
+                                                            <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.price}</p>
+                                                    <div class="w-15 w-xs-100">
+                                                                <span class="badge badge-pill badge-primary">${item.status}</span>
+                                                    </div>
+                                                </div>
+                                                <label class="custom-control custom-checkbox mb-1 align-self-center pr-4">
+                                                        <input type="checkbox" class="custom-control-input" name="selectRoom" value="${item.roomId}">
+                                                    <span class="custom-control-label">&nbsp;</span>
+                                                </label>
+                                            </div>
+                                        </div>`
+                $("#listRooms").append(html);
+            }))
+            .catch(err => alert(err));
+    }
+
+</script>

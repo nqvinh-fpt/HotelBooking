@@ -1,0 +1,31 @@
+﻿@using HotelManagementSystemClient.Models.Accounts
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<form asp-action="Login" method="post">
+    <h2>Login</h2>
+    <div class="input-field">
+        <input asp-for="Username" type="text" required>
+        <label>Enter your username</label>
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div class="input-field">
+        <input asp-for="Password" type="password" required>
+        <label>Enter your password</label>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="forget">
+        <label for="remember">
+            <input value="RememberMe" type="checkbox">
+            <p>Remember me</p>
+        </label>
+        <a href="#">Forgot password?</a>
+    </div>
+    <button type="submit">Log In</button>
+    <div class="register">
+        <p>Don't have an account? <a asp-controller="Accounts" asp-action="Register">Register</a></p>
+    </div>
+</form>

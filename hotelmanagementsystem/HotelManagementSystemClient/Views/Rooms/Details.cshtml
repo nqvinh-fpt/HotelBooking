@@ -1,0 +1,383 @@
+﻿@model HotelManagementSystemClient.Controllers.RoomDetailsViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Rooms";
+    var userId = (Context.Session.GetString("UserId") != null) ? Context.Session.GetString("UserId") : null;
+    var roomId = ViewData["RoomId"];
+    var ok = ViewData["ok"];
+    <style type="text/css">
+        .feedback-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .feedback-rating {
+            margin-bottom: 5px;
+        }
+
+        .star {
+            font-size: 20px;
+            color: #ccc;
+        }
+
+            .star.filled {
+                color: rgb(255, 106, 0);
+            }
+
+        .feedback-details p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: #fff;
+            width: 100%;
+            border: none;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: left;
+        }
+
+        .star {
+            font-size: 3rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+            .star.one,
+            .star.two,
+            .star.three,
+            .star.four,
+            .star.five {
+                color: rgb(255, 106, 0);
+            }
+    </style>
+}
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(/img/carousel-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center pb-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Detailed Room</h1>
+            <nav aria-label="breadcrumb">
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Room Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            @* Handle image URL directly inline *@
+                            @if (!string.IsNullOrEmpty(Model.Room.RoomType))
+                            {
+                                string roomType = Model.Room.RoomType.ToLower(); 
+
+                                <img class="img-fluid mb-3" src="@Model.Room.RoomImage" alt="Room Image" style="width: 100%; height: 150px;">
+                            }
+                            else
+                            {
+                                <img class="img-fluid mb-3" src="~/Client/img/default-room.jpg" alt="Default Room Image">
+                            }
+                        </div>
+                        <div class="col-lg-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Room Number</dt>
+                                <dd class="col-sm-8">@Model.Room.RoomNumber</dd>
+
+                                <dt class="col-sm-4">Room Type</dt>
+                                <dd class="col-sm-8">@Model.Room.RoomType</dd>
+
+                                <dt class="col-sm-4">Status</dt>
+                                <dd class="col-sm-8">@Model.Room.Status</dd>
+
+                                <dt class="col-sm-4">Price</dt>
+                                <dd class="col-sm-8">@Model.Room.Price</dd>
+
+                                <dt class="col-sm-4">Amenities</dt>
+                                <dd class="col-sm-8">@Model.Room.Amenities</dd>
+
+                                <dt class="col-sm-4">Floor</dt>
+                                <dd class="col-sm-8">@Model.Room.Floor</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (ok != null)
+    {
+         <div class="row mt-5">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card-header bg-primary text-white">
+                <h4>Leave a Feedback and Rating</h4>
+            </div>
+            <div>
+                <div class="mb-3">
+                    <label for="feedback" class="form-label">Feedback</label>
+                    <textarea class="form-control" id="feedback" name="feedback" rows="4" required></textarea>
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div class="card">
+                            <div class="stars">
+                                <span onclick="gfg(1)" class="star">★</span>
+                                <span onclick="gfg(2)" class="star">★</span>
+                                <span onclick="gfg(3)" class="star">★</span>
+                                <span onclick="gfg(4)" class="star">★</span>
+                                <span onclick="gfg(5)" class="star">★</span>
+                            </div>
+                            <input type="hidden" id="rating" name="rating" value="0" />
+                            <input type="hidden" id="userId" name="userId" value="@userId" />
+                            <input type="hidden" id="roomId" name="roomId" value="@roomId" />
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="Submit()" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+    }
+
+    <div class="row mt-5">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card-header bg-primary text-white">
+                <h4>Feedback</h4>
+            </div>
+            <div class="table-container">
+                <!-- Feedback data will be appended here -->
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-lg-12">
+            <h3>Other Rooms</h3>
+            <div class="row g-4">
+                @foreach (var room in Model.OtherRooms)
+                {
+                    string roomType = room.RoomType.ToLower();
+
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="room-item shadow rounded overflow-hidden">
+                            <div class="position-relative">
+                                <img class="img-fluid" src="@room.RoomImage" alt="Room Image" style="width: 100%; height: 150px;">
+                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">@room.Price/h</small>
+                            </div>
+                            <div class="p-4 mt-2">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="mb-0">@room.RoomType</h5>
+                                    <div class="ps-2">
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>@room.RoomNumber</small>
+                                    <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>@room.Status</small>
+                                    <small><i class="fa fa-wifi text-primary me-2"></i>@room.Amenities</small>
+                                </div>
+                                <p class="text-body mb-3">This room is located on floor @room.Floor.</p>
+                                <div class="d-flex justify-content-between">
+                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="/Rooms/Details/@room.RoomId">View Detail</a>
+                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="/Book/@room.RoomId">Book Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let stars = document.getElementsByClassName("star");
+    let output = document.getElementById("rating");
+    let roomId = '@ViewData["RoomId"]';
+    let userId = '@userId';
+
+    // Function to update rating
+    function gfg(n) {
+        remove();
+        for (let i = 0; i < n; i++) {
+            stars[i].className = "star " + ["one", "two", "three", "four", "five"][n - 1];
+        }
+        output.value = n;
+    }
+
+    // To remove the pre-applied styling
+    function remove() {
+        for (let i = 0; i < 5; i++) {
+            stars[i].className = "star";
+        }
+    }
+
+    function getListFeedBack(RoomId) {
+        fetch(`https://localhost:7092/api/Feedbacks/GetFeedBacksByRoomId/${RoomId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        }).then(response => response.json())
+            .then(data => {
+                const container = document.querySelector('.table-container');
+                container.innerHTML = '';
+
+                data.forEach(feedback => {
+                    const starsHtml = generateStars(feedback.rating);
+                    const feedbackHtml = `
+                            <div class="feedback-item" data-feedback-id="${feedback.feedbackId}">
+                                <div class="feedback-rating">
+                                    ${starsHtml}
+                                </div>
+                                <div class="feedback-details">
+                                    <p><strong>User:</strong> ${feedback.customer ? feedback.customer.firstName + " " + feedback.customer.lastName : 'Anonymous'}</p>
+                                    <p><strong>Comment:</strong> ${feedback.comment}</p>
+                                    <p><strong>Date:</strong> ${new Date(feedback.feedbackDate).toLocaleDateString()}</p>
+                                    ${feedback.customerId == userId ? `
+                                        <button onclick="editFeedback(${feedback.feedbackId})" class="btn btn-sm btn-warning">Edit</button>
+                                        <button onclick="deleteFeedback(${feedback.feedbackId})" class="btn btn-sm btn-danger">Delete</button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    container.innerHTML += feedbackHtml;
+                });
+            }).catch(error => {
+                console.error('Error fetching feedback:', error);
+            });
+    }
+
+    function generateStars(rating) {
+        let starsHtml = '';
+        for (let i = 0; i < 5; i++) {
+            if (i < rating) {
+                starsHtml += '<span class="star filled">&#9733;</span>';
+            } else {
+                starsHtml += '<span class="star">&#9734;</span>';
+            }
+        }
+        return starsHtml;
+    }
+
+    function Submit() {
+        let feedback = document.getElementById("feedback").value;
+        let rating = document.getElementById("rating").value;
+        if (!feedback || rating == 0) {
+            alert("Please provide feedback and select a rating.");
+            return;
+        }
+        let today = new Date().toISOString().slice(0, 10);
+
+        fetch('https://localhost:7092/api/Feedbacks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                feedbackId: 0,
+                comment: feedback,
+                rating: rating,
+                customerId: userId,
+                roomId: roomId,
+                feedbackDate: today
+            })
+        }).then(response => {
+            if (response.ok) {
+                getListFeedBack(roomId);
+                document.getElementById("feedback").value = '';
+                remove();
+            } else {
+                alert("Error submitting feedback");
+            }
+        }).catch(error => {
+            console.error('Error submitting feedback:', error);
+        });
+    }
+
+    function editFeedback(feedbackId) {
+        const feedbackItem = document.querySelector(`.feedback-item[data-feedback-id="${feedbackId}"]`);
+        const comment = feedbackItem.querySelector('.feedback-details p:nth-child(2)').textContent.replace('Comment: ', '');
+        const rating = feedbackItem.querySelectorAll('.star.filled').length;
+
+        document.getElementById("feedback").value = comment;
+        gfg(rating);
+
+        const submitButton = document.querySelector('button[onclick="Submit()"]');
+        submitButton.setAttribute('onclick', `updateFeedback(${feedbackId})`);
+    }
+
+    function updateFeedback(feedbackId) {
+        let feedback = document.getElementById("feedback").value;
+        let rating = document.getElementById("rating").value;
+
+        fetch(`https://localhost:7092/api/Feedbacks/edit-feedback/${feedbackId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                feedbackId: feedbackId,
+                comment: feedback,
+                rating: rating,
+                customerId: userId,
+                roomId: roomId,
+                feedbackDate: new Date().toISOString().slice(0, 10)
+            })
+        }).then(response => {
+            if (response.ok) {
+                getListFeedBack(roomId);
+                document.getElementById("feedback").value = '';
+                remove();
+                const submitButton = document.querySelector('button[onclick^="updateFeedback"]');
+                submitButton.setAttribute('onclick', 'Submit()');
+            } else {
+                alert("Error updating feedback");
+            }
+        }).catch(error => {
+            console.error('Error updating feedback:', error);
+        });
+    }
+
+    function deleteFeedback(feedbackId) {
+        if (confirm("Are you sure you want to delete this feedback?")) {
+            fetch(`https://localhost:7092/api/Feedbacks/remove-feedback/${feedbackId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    getListFeedBack(roomId);
+                } else {
+                    alert("Error deleting feedback");
+                }
+            }).catch(error => {
+                console.error('Error deleting feedback:', error);
+            });
+        }
+    }
+
+    getListFeedBack(roomId);
+</script>
+
+
+<!-- Include Font Awesome for star icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">

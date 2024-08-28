@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Employee List</h2>
+
+<table id="employeeTable" class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Position</th>
+            <th>Department</th>
+            <th>Salary</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Employee rows will be populated here -->
+    </tbody>
+</table>
+
+<button onclick="window.location.href='/Employees/create'">Create New Employee</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('https://localhost:7092/api/employee')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('employeeTable').querySelector('tbody');
+                data.forEach(employee => {
+                    let row = tableBody.insertRow();
+                    row.insertCell(0).innerText = employee.firstName;
+                    row.insertCell(1).innerText = employee.lastName;
+                    row.insertCell(2).innerText = employee.username;
+                    row.insertCell(3).innerText = employee.email;
+                    row.insertCell(4).innerText = employee.phoneNumber;
+                    row.insertCell(5).innerText = employee.position;
+                    row.insertCell(6).innerText = employee.department;
+                    row.insertCell(7).innerText = employee.salary;
+                    let actionsCell = row.insertCell(8);
+                    actionsCell.innerHTML = `
+                            <button onclick="window.location.href='/Employees/update/${employee.employeeId}'">Edit</button>
+                            <button onclick="deleteEmployee(${employee.employeeId})">Delete</button>`;
+                });
+            })
+            .catch(error => console.error('Error fetching employee data:', error));
+    });
+
+    function deleteEmployee(employeeId) {
+        if (!confirm('Are you sure you want to delete this employee?')) {
+            return;
+        }
+
+        fetch(`https://localhost:7092/api/employee/${employeeId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Employee deleted successfully.');
+                    location.reload();
+                } else {
+                    alert('Error deleting employee.');
+                }
+            })
+            .catch(error => console.error('Error deleting employee:', error));
+    }
+</script>

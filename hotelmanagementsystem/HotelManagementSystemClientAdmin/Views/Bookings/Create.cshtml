@@ -1,0 +1,143 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>Create Booking</h1>
+            <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                <ol class="breadcrumb pt-0">
+                    <li class="breadcrumb-item">
+                        <a href="/Bookings">Bookings</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                </ol>
+            </nav>
+            <div class="separator mb-5"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-4">Basic</h5>
+                    <form id="createBookingForm" class="tooltip-label-right" novalidate>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Room Number</label>
+                            <input id="roomInput" type="text" class="form-control" list="roomList" required>
+                            <datalist id="roomList"></datalist>
+                            <input type="hidden" id="roomId" name="jQueryRoomId">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Customer Name</label>
+                            <input id="customerInput" type="text" class="form-control" list="customerList" required>
+                            <datalist id="customerList"></datalist>
+                            <input type="hidden" id="customerId" name="jQueryCustomerId">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Check-In Date</label>
+                            <input id="checkInDate" type="datetime-local" class="form-control" required name="jQueryCheckInDate">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Check-Out Date</label>
+                            <input id="checkOutDate" type="datetime-local" class="form-control" required name="jQueryCheckOutDate">
+                        </div>
+                        <div class="form-group position-relative error-l-50">
+                            <label>Status</label>
+                            <input id="status" type="text" class="form-control" value="Booked" readonly>
+                            <input type="hidden" id="statusValue" name="jqueryStatus" value="1">
+                        </div>
+                        <button type="button" class="btn btn-primary mb-0" onclick="submitBookingForm()">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var BookingApiUrl = "https://localhost:7092/api/bookings/create-booking";
+    InitializeBookingComponent();
+
+    function InitializeBookingComponent() {
+        InitializeList("roomId");
+        InitializeList("customerId");
+    }
+
+    function InitializeList(type) {
+        switch (type) {
+            case "roomId":
+                $("#roomList").html("");
+                fetchRooms();
+                break;
+            case "customerId":
+                $("#customerList").html("");
+                fetchCustomers();
+                break;
+        }
+    }
+
+    function fetchRooms() {
+        fetch("https://localhost:7092/api/Rooms?$filter=Status eq 'Available'")
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                let html = `<option data-id="${item.roomId}" value="${item.roomNumber}"></option>`;
+                $("#roomList").append(html);
+            }))
+            .catch(err => alert(err));
+    }
+
+    function fetchCustomers() {
+        fetch("https://localhost:7092/api/customer/get-all-customer")
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                let html = `<option data-id="${item.customerId}" value="${item.firstName} ${item.lastName}"></option>`;
+                $("#customerList").append(html);
+            }))
+            .catch(err => alert(err));
+    }
+
+    function submitBookingForm() {
+        let roomNumber = document.getElementById("roomInput").value;
+        let customerName = document.getElementById("customerInput").value;
+        let roomId = $("#roomList option[value='" + roomNumber + "']").data("id");
+        let customerId = $("#customerList option[value='" + customerName + "']").data("id");
+
+        if (!roomId || !customerId) {
+            alert("Invalid room number or customer name.");
+            return;
+        }
+
+        let bookingParam = {
+            bookingId: 0,
+            roomId: roomId,
+            customerId: customerId,
+            checkInDate: document.getElementById("checkInDate").value,
+            checkOutDate: document.getElementById("checkOutDate").value,
+            status: document.getElementById("statusValue").value
+        };
+
+        fetch(BookingApiUrl, {
+            method: 'Post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookingParam)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Add success");
+                    window.location.href = '/Bookings';
+                } else {
+                    console.error('Error creating booking:', response.statusText);
+                    return Promise.reject(new Error('Failed to create booking'));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>

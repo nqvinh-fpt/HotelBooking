@@ -1,0 +1,243 @@
+﻿@{
+    ViewData["Title"] = "Bookings";
+}
+
+<div class="container-fluid disable-text-selection">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-2">
+                <h1>Booking List</h1>
+                <div class="top-right-button-container">
+                    <a href="Bookings/Create">
+                        <button type="button" class="btn btn-primary btn-lg top-right-button mr-1">ADD NEW</button>
+                    </a>
+                    <div class="btn-group">
+                        <div class="btn btn-primary btn-lg pl-4 pr-0 check-button">
+                            <label class="custom-control custom-checkbox mb-0 d-inline-block">
+                                <input type="checkbox" class="custom-control-input" id="checkAll">
+                                <span class="custom-control-label">&nbsp;</span>
+                            </label>
+                        </div>
+                        <button type="button"
+                                class="btn btn-lg btn-primary dropdown-toggle dropdown-toggle-split"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                        </div>
+                    </div>
+                </div>
+                <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                    <ol class="breadcrumb pt-0">
+                        <li class="breadcrumb-item active" aria-current="page">Bookings</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="mb-2">
+                <a class="btn pt-0 pl-0 d-inline-block d-md-none" data-toggle="collapse" href="#displayOptions"
+                   role="button" aria-expanded="true" aria-controls="displayOptions">
+                    Display Options
+                    <i class="simple-icon-arrow-down align-middle"></i>
+                </a>
+                <div class="collapse dont-collapse-sm" id="displayOptions">
+                    <div class="d-block d-md-inline-block">
+                        <div id="statusOption" class="btn-group float-md-left mr-1 mb-1">
+                            <button class="btn btn-outline-dark btn-xs dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Booking Status
+                            </button>
+                            <div id="statusDropdown" class="dropdown-menu">
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Active</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Completed</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">Cancelled</a>
+                                <a class="dropdown-item" onclick="setSearchStatus(this)">All</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block d-md-inline-block">
+                        <div class="search-sm d-inline-block float-md-left mr-1 mb-1 align-top">
+                            <input placeholder="Search...">
+                        </div>
+                    </div>
+                    <div class="float-md-right">
+                        <span id="numSpan" class="text-muted text-small">Displaying 1-10 of 210 items </span>
+                        <button id="itemNum" class="btn btn-outline-dark btn-xs dropdown-toggle" type="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            20
+                        </button>
+                        <div id="itemNumDropdown" class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 10)">10</a>
+                            <a class="dropdown-item active" href="#" onclick="setItemNum(this, 20)">20</a>
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 30)">30</a>
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 50)">50</a>
+                            <a class="dropdown-item" href="#" onclick="setItemNum(this, 100)">100</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="separator mb-5"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 list" data-check-all="checkAll" id="listBookings">
+            <!-- Booking items will be populated here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script type="text/javascript">
+    const BookingApiUrl = "https://localhost:7092/api/bookings/get-all-bookings";
+    const UpdateBookingApiUrl = "https://localhost:7092/api/bookings/update-booking";
+    const UpdateRoomApiUrl = "https://localhost:7092/api/Rooms/UpdateRoom";
+    const GetBookingByIdApiUrl = "https://localhost:7092/api/bookings/get-booking-by-id/";
+    const GetRoomByIdApiUrl = "https://localhost:7092/api/Rooms/";
+
+    const statusMap = new Map([
+        [0, { text: 'Pending', class: 'badge-warning' }],
+        [1, { text: 'Booked', class: 'badge-success' }],
+        [2, { text: 'Cancelled', class: 'badge-danger' }],
+    ]);
+
+    DisplayBookings();
+    setupFilter();
+
+    function setupFilter() {
+        setupStatusOption();
+    }
+
+    function setupStatusOption() {
+        $("#statusOption div").html("");
+        for (const [key, value] of statusMap) {
+            $("#statusOption div").append('<a class="dropdown-item" onclick="setSearchStatus(this)">' + value.text + '</a>');
+        }
+        $("#statusOption div").append('<a class="dropdown-item" onclick="setSearchStatus(this)">All</a>');
+    }
+
+    function setSearchStatus(element) {
+        // Your existing logic to filter bookings by status
+    }
+
+    function DisplayBookings() {
+        $("#listBookings").html("");
+        fetch(BookingApiUrl)
+            .then(res => res.json())
+            .then(data => data.forEach(item => {
+                let status = statusMap.get(item.status);
+                let html = `<div class="card d-flex flex-row mb-3">
+                                <div class="d-flex flex-grow-1 min-width-zero">
+                                    <div class="card-body align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center">
+                                        <a class="list-item-heading mb-0 truncate w-40 w-xs-100" href="Bookings/Edit/${item.bookingId}">
+                                            ${item.bookingId}
+                                        </a>
+                                        <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.room.roomNumber}</p>
+                                        <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.room.roomType}</p>
+                                        <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.customer.firstName} ${item.customer.lastName}</p>
+                                        <p class="mb-0 text-muted text-small w-15 w-xs-100">${item.customer.phoneNumber}</p>
+                                        <div class="w-15 w-xs-100">
+                                            <span class="badge badge-pill ${status.class}">${status.text}</span>
+                                        </div>
+                                        <div class="w-15 w-xs-100">
+                                            <button class="btn btn-success btn-sm" onclick="updateBookingStatus(${item.bookingId}, 1)">Accept</button>
+                                            <button class="btn btn-danger btn-sm" onclick="declineBooking(${item.bookingId}, ${item.room.roomId})">Decline</button>
+                                        </div>
+                                    </div>
+                                    <label class="custom-control custom-checkbox mb-1 align-self-center pr-4">
+                                        <input type="checkbox" class="custom-control-input">
+                                        <span class="custom-control-label">&nbsp;</span>
+                                    </label>
+                                </div>
+                            </div>`;
+                $("#listBookings").append(html);
+            }))
+            .catch(error => console.error("Error:", error));
+    }
+
+    function updateBookingStatus(bookingId, status) {
+        fetch(`${GetBookingByIdApiUrl}${bookingId}`)
+            .then(res => res.json())
+            .then(booking => {
+                const updateData = {
+                    bookingId: booking.bookingId,
+                    roomId: booking.room.roomId,
+                    customerId: booking.customer.customerId,
+                    status: status,
+                    checkInDate: booking.checkInDate,
+                    checkOutDate: booking.checkOutDate
+                };
+                console.log(updateData);
+                return fetch(`${UpdateBookingApiUrl}/${bookingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Booking status updated:', data);
+                DisplayBookings();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function declineBooking(bookingId, roomId) {
+        fetch(`${GetBookingByIdApiUrl}${bookingId}`)
+            .then(res => res.json())
+            .then(booking => {
+                const updateData = {
+                    bookingId: booking.bookingId,
+                    roomId: booking.room.roomId,
+                    customerId: booking.customer.customerId,
+                    status: 2, // Assuming 2 is for 'Cancelled'
+                    checkInDate: booking.checkInDate,
+                    checkOutDate: booking.checkOutDate
+                };
+                return fetch(`${UpdateBookingApiUrl}/${bookingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+            })
+            .then(() => fetch(`${GetRoomByIdApiUrl}${roomId}`))
+            .then(res => res.json())
+            .then(room => {
+                const updateRoomData = {
+                    roomId: room.roomId,
+                    roomNumber: room.roomNumber,
+                    roomType: room.roomType,
+                    status: 'Available', // Assuming status is a string
+                    price: room.price,
+                    amenities: room.amenities,
+                    roomImage: room.roomImage,
+                    floor: room.floor
+                };
+                console.log(updateRoomData);
+                return fetch(`${UpdateRoomApiUrl}/${roomId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateRoomData)
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Room status updated:', data);
+                DisplayBookings();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
+</script>

@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Update Employee";
+}
+
+<h2>Update Employee</h2>
+
+<form id="updateEmployeeForm">
+    <input type="hidden" id="employeeId" name="employeeId" />
+    <div>
+        <label>First Name</label>
+        <input type="text" id="firstName" name="firstName" required />
+    </div>
+    <div>
+        <label>Last Name</label>
+        <input type="text" id="lastName" name="lastName" required />
+    </div>
+    <div>
+        <label>Username</label>
+        <input type="text" id="username" name="username" required />
+    </div>
+    <div>
+        <label>Password</label>
+        <input type="password" id="password" name="password" />
+    </div>
+    <div>
+        <label>Email</label>
+        <input type="email" id="email" name="email" required />
+    </div>
+    <div>
+        <label>Phone Number</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required />
+    </div>
+    <div>
+        <label>Position</label>
+        <input type="text" id="position" name="position" />
+    </div>
+    <div>
+        <label>Department</label>
+        <input type="text" id="department" name="department" />
+    </div>
+    <div>
+        <label>Salary</label>
+        <input type="number" step="0.01" id="salary" name="salary" />
+    </div>
+    <button type="submit">Update</button>
+</form>
+
+<script>
+    const employeeId = window.location.pathname.split('/').pop();
+    document.getElementById('employeeId').value = employeeId;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch(`https://localhost:7092/api/employee/${employeeId}`)
+            .then(response => response.json())
+            .then(employee => {
+                document.getElementById('firstName').value = employee.firstName;
+                document.getElementById('lastName').value = employee.lastName;
+                document.getElementById('username').value = employee.username;
+                document.getElementById('email').value = employee.email;
+                document.getElementById('phoneNumber').value = employee.phoneNumber;
+                document.getElementById('position').value = employee.position;
+                document.getElementById('department').value = employee.department;
+                document.getElementById('salary').value = employee.salary;
+            })
+            .catch(error => console.error('Error fetching employee data:', error));
+    });
+
+    document.getElementById('updateEmployeeForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const employee = {
+            employeeId: document.getElementById('employeeId').value,
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            email: document.getElementById('email').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            position: document.getElementById('position').value,
+            department: document.getElementById('department').value,
+            salary: parseFloat(document.getElementById('salary').value) || null
+        };
+
+        fetch(`https://localhost:7092/api/employee/${employeeId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(employee)
+        })
+            .then(response => response.ok ? alert('Employee updated successfully.') : alert('Error updating employee.'))
+            .then(() => window.location.href = '/Employees')
+            .catch(error => console.error('Error updating employee:', error));
+    });
+</script>
